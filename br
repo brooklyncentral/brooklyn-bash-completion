@@ -42,7 +42,7 @@ _br() {
     # Commands available for each state
     initial="access add-catalog application catalog deploy locations login version help"
     application="access add-children config delete effector entity invoke policy rename restart sensor set spec start stop"
-    entity="access add-children config delete effector entity invoke policy rename restart sensor set spec start stop"
+    entity="access add-children config delete effector invoke policy rename restart sensor set spec start stop"
 
     # Determine command state
     if [[ ${COMP_CWORD} == 1 ]] ; then
