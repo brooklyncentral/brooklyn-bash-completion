@@ -1,0 +1,171 @@
+# Copyright 2016 by Cloudsoft Corporation Limited
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+##
+# Bash tab completion for the Apache Brooklyn 'br' CLI tool
+##
+
+##
+# Handle slashes in filenames after directories
+##
+slashes() {
+    if [ ${#COMPREPLY[@]} = 1 ]; then
+        [ -d "$COMPREPLY" ] && last=/
+        COMPREPLY=$(printf %q%s "$COMPREPLY" "$last")
+    else
+        for ((i=0; i < ${#COMPREPLY[@]}; i++)); do
+           [ -d "${COMPREPLY[$i]}" ] && COMPREPLY[$i]=${COMPREPLY[$i]}/
+        done
+    fi
+}
+
+##
+# Completion function
+##
+_br() {
+    local cur prev last=' ' state appid entityid
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    # Commands available for each state
+    initial="access add-catalog application catalog deploy locations login version help"
+    application="access add-children config delete effector entity invoke policy rename restart sensor set spec start stop"
+    entity="access add-children config delete effector entity invoke policy rename restart sensor set spec start stop"
+
+    # Determine command state
+    if [[ ${COMP_CWORD} == 1 ]] ; then
+        state=initial
+    elif [[ "${COMP_WORDS[1]}" == "application" && ${COMP_CWORD} == 2 ]] ; then
+        state=app
+    elif [[ "${COMP_WORDS[1]}" == "deploy" && ${COMP_CWORD} == 2 ]] ; then
+        state=deploy
+    elif [[ "${COMP_WORDS[1]}" == "add-catalog" && ${COMP_CWORD} == 2 ]] ; then
+        state=add-catalog
+    elif [[ "${COMP_WORDS[1]}" == "application" && ${COMP_CWORD} == 3 ]] ; then
+        state=appid
+    elif [[ "${COMP_WORDS[1]}" == "application" && "${COMP_WORDS[3]}" == "entity" && ${COMP_CWORD} == 4 ]] ; then
+        state=entity
+        appid=${COMP_WORDS[2]}
+    elif [[ "${COMP_WORDS[1]}" == "application" && "${COMP_WORDS[3]}" == "sensor" && ${COMP_CWORD} == 4 ]] ; then
+        state=appsensor
+        appid=${COMP_WORDS[2]}
+    elif [[ "${COMP_WORDS[1]}" == "application" && "${COMP_WORDS[3]}" == "effector" && ${COMP_CWORD} == 4 ]] ; then
+        state=appeffector
+        appid=${COMP_WORDS[2]}
+    elif [[ "${COMP_WORDS[1]}" == "application" && "${COMP_WORDS[3]}" == "config" && ${COMP_CWORD} == 4 ]] ; then
+        state=appconfig
+        appid=${COMP_WORDS[2]}
+    elif [[ "${COMP_WORDS[1]}" == "application" && "${COMP_WORDS[3]}" == "entity" && ${COMP_CWORD} == 5 ]] ; then
+        state=entityid
+        appid=${COMP_WORDS[2]}
+        entityid=${COMP_WORDS[4]}
+    elif [[ "${COMP_WORDS[1]}" == "application" && "${COMP_WORDS[3]}" == "entity" && "${COMP_WORDS[5]}" == "sensor" && ${COMP_CWORD} == 6 ]] ; then
+        state=entitysensor
+        appid=${COMP_WORDS[2]}
+        entityid=${COMP_WORDS[4]}
+    elif [[ "${COMP_WORDS[1]}" == "application" && "${COMP_WORDS[3]}" == "entity" && "${COMP_WORDS[5]}" == "effector" && ${COMP_CWORD} == 6 ]] ; then
+        state=entityeffector
+        appid=${COMP_WORDS[2]}
+        entityid=${COMP_WORDS[4]}
+    elif [[ "${COMP_WORDS[1]}" == "application" && "${COMP_WORDS[3]}" == "entity" && "${COMP_WORDS[5]}" == "config" && ${COMP_CWORD} == 6 ]] ; then
+        state=entityconfig
+        appid=${COMP_WORDS[2]}
+        entityid=${COMP_WORDS[4]}
+    fi
+
+    # Generate completions for current state
+    case "${state}" in
+        initial)
+            COMPREPLY=( $(compgen -W "${initial}" -- "${cur}") )
+            COMPREPLY=$(printf %q%s "$COMPREPLY" "$last")
+            ;;
+        app)
+            local applist=$(br application | tail +2 | awk '{ print $1; }')
+            if [[ "${applist}" ]] ; then
+                COMPREPLY=( $(compgen -W "${applist}" -- "${cur}") )
+                COMPREPLY=$(printf %q%s "$COMPREPLY" "$last")
+            fi
+            ;;
+        appid)
+            COMPREPLY=( $(compgen -W "${application}" -- "${cur}") )
+            COMPREPLY=$(printf %q%s "$COMPREPLY" "$last")
+            ;;
+        appsensor)
+            local sensorlist=$(br application ${appid} sensor | tail +2 | awk '{ print $1; }')
+            if [[ "${sensorlist}" ]] ; then
+                COMPREPLY=( $(compgen -W "${sensorlist}" -- "${cur}") )
+                COMPREPLY=$(printf %q%s "$COMPREPLY" "$last")
+            fi
+            ;;
+        appeffector)
+            local effectorlist=$(br application ${appid} effector | tail +2 | awk '{ print $1; }')
+            if [[ "${effectorlist}" ]] ; then
+                COMPREPLY=( $(compgen -W "${effectorlist}" -- "${cur}") )
+                COMPREPLY=$(printf %q%s "$COMPREPLY" "$last")
+            fi
+            ;;
+        appconfig)
+            local configlist=$(br application ${appid} config | tail +2 | awk '{ print $1; }')
+            if [[ "${configlist}" ]] ; then
+                COMPREPLY=( $(compgen -W "${configlist}" -- "${cur}") )
+                COMPREPLY=$(printf %q%s "$COMPREPLY" "$last")
+            fi
+            ;;
+        entity)
+            local entitylist=$(br application ${appid} entity | tail +2 | awk '{ print $1; }')
+            if [[ "${entitylist}" ]] ; then
+                COMPREPLY=( $(compgen -W "${entitylist}" -- "${cur}") )
+                COMPREPLY=$(printf %q%s "$COMPREPLY" "$last")
+            fi
+            ;;
+        entityid)
+            COMPREPLY=( $(compgen -W "${entity}" -- "${cur}") )
+            COMPREPLY=$(printf %q%s "$COMPREPLY" "$last")
+            ;;
+        entitysensor)
+            local sensorlist=$(br application ${appid} entity ${entityid} sensor | tail +2 | awk '{ print $1; }')
+            if [[ "${sensorlist}" ]] ; then
+                COMPREPLY=( $(compgen -W "${sensorlist}" -- "${cur}") )
+                COMPREPLY=$(printf %q%s "$COMPREPLY" "$last")
+            fi
+            ;;
+        entityeffector)
+            local effectorlist=$(br application ${appid} entity ${entityid} effector | tail +2 | awk '{ print $1; }')
+            if [[ "${effectorlist}" ]] ; then
+                COMPREPLY=( $(compgen -W "${effectorlist}" -- "${cur}") )
+                COMPREPLY=$(printf %q%s "$COMPREPLY" "$last")
+            fi
+            ;;
+        entityconfig)
+            local configlist=$(br application ${appid} entity ${entityid} config | tail +2 | awk '{ print $1; }')
+            if [[ "${configlist}" ]] ; then
+                COMPREPLY=( $(compgen -W "${configlist}" -- "${cur}") )
+                COMPREPLY=$(printf %q%s "$COMPREPLY" "$last")
+            fi
+            ;;
+        deploy)
+            COMPREPLY=( $(compgen -o plusdirs -f -X '!*.yaml' -- "${cur}") )
+            slashes
+            ;;
+        add-catalog)
+            COMPREPLY=( $(compgen -o plusdirs -f -X '!*.bom' -- "${cur}") )
+            slashes
+            ;;
+    esac
+}
+
+complete -o nospace -F _br br
+
+# vim:ts=4:sw=4:ft=sh:
