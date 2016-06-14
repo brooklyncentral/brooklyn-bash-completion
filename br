@@ -92,7 +92,7 @@ _br() {
             COMPREPLY=$(printf %q%s "$COMPREPLY" "$last")
             ;;
         app)
-            local applist=$(br application | tail +2 | awk '{ print $1; }')
+            local applist=$(br application | tail -n +2 | awk '{ print $1; }')
             if [[ "${applist}" ]] ; then
                 COMPREPLY=( $(compgen -W "${applist}" -- "${cur}") )
                 COMPREPLY=$(printf %q%s "$COMPREPLY" "$last")
@@ -103,28 +103,28 @@ _br() {
             COMPREPLY=$(printf %q%s "$COMPREPLY" "$last")
             ;;
         appsensor)
-            local sensorlist=$(br application ${appid} sensor | tail +2 | awk '{ print $1; }')
+            local sensorlist=$(br application ${appid} sensor | tail -n +2 | awk '{ print $1; }')
             if [[ "${sensorlist}" ]] ; then
                 COMPREPLY=( $(compgen -W "${sensorlist}" -- "${cur}") )
                 COMPREPLY=$(printf %q%s "$COMPREPLY" "$last")
             fi
             ;;
         appeffector)
-            local effectorlist=$(br application ${appid} effector | tail +2 | awk '{ print $1; }')
+            local effectorlist=$(br application ${appid} effector | tail -n +2 | awk '{ print $1; }')
             if [[ "${effectorlist}" ]] ; then
                 COMPREPLY=( $(compgen -W "${effectorlist}" -- "${cur}") )
                 COMPREPLY=$(printf %q%s "$COMPREPLY" "$last")
             fi
             ;;
         appconfig)
-            local configlist=$(br application ${appid} config | tail +2 | awk '{ print $1; }')
+            local configlist=$(br application ${appid} config | tail -n +2 | awk '{ print $1; }')
             if [[ "${configlist}" ]] ; then
                 COMPREPLY=( $(compgen -W "${configlist}" -- "${cur}") )
                 COMPREPLY=$(printf %q%s "$COMPREPLY" "$last")
             fi
             ;;
         entity)
-            local entitylist=$(br application ${appid} entity | tail +2 | awk '{ print $1; }')
+            local entitylist=$(br application ${appid} entity | tail -n +2 | awk '{ print $1; }')
             if [[ "${entitylist}" ]] ; then
                 COMPREPLY=( $(compgen -W "${entitylist}" -- "${cur}") )
                 COMPREPLY=$(printf %q%s "$COMPREPLY" "$last")
@@ -135,21 +135,21 @@ _br() {
             COMPREPLY=$(printf %q%s "$COMPREPLY" "$last")
             ;;
         entitysensor)
-            local sensorlist=$(br application ${appid} entity ${entityid} sensor | tail +2 | awk '{ print $1; }')
+            local sensorlist=$(br application ${appid} entity ${entityid} sensor | tail -n +2 | awk '{ print $1; }')
             if [[ "${sensorlist}" ]] ; then
                 COMPREPLY=( $(compgen -W "${sensorlist}" -- "${cur}") )
                 COMPREPLY=$(printf %q%s "$COMPREPLY" "$last")
             fi
             ;;
         entityeffector)
-            local effectorlist=$(br application ${appid} entity ${entityid} effector | tail +2 | awk '{ print $1; }')
+            local effectorlist=$(br application ${appid} entity ${entityid} effector | tail -n +2 | awk '{ print $1; }')
             if [[ "${effectorlist}" ]] ; then
                 COMPREPLY=( $(compgen -W "${effectorlist}" -- "${cur}") )
                 COMPREPLY=$(printf %q%s "$COMPREPLY" "$last")
             fi
             ;;
         entityconfig)
-            local configlist=$(br application ${appid} entity ${entityid} config | tail +2 | awk '{ print $1; }')
+            local configlist=$(br application ${appid} entity ${entityid} config | tail -n +2 | awk '{ print $1; }')
             if [[ "${configlist}" ]] ; then
                 COMPREPLY=( $(compgen -W "${configlist}" -- "${cur}") )
                 COMPREPLY=$(printf %q%s "$COMPREPLY" "$last")
