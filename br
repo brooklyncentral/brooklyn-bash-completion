@@ -31,6 +31,30 @@ slashes() {
 }
 
 ##
+# Recursive list of entities in an application
+##
+entities() {
+    entities=$(br application $1 entity | tail -n +2 | sed -e "s/ *[a-zA-Z][a-zA-Z0-9_.]* *$//")
+    if [[ "${entities}" ]] ; then
+        echo "${entities}" | while read e n; do
+            echo "${e}"
+            echo "${n}" | grep -v " "
+            entitychildren $1 ${e}
+        done
+    fi
+}
+entitychildren() {
+    children=$(br application $1 entity --children $2 | tail -n +2 | sed -e "s/ *[a-zA-Z][a-zA-Z0-9_.]* *$//")
+    if [[ "${children}" ]] ; then
+        echo "${children}" | while read e n ; do
+            echo "${e}"
+            echo "${n}" | grep -v " "
+            entitychildren $1 ${e}
+        done
+    fi
+}
+
+##
 # Completion function
 ##
 _br() {
@@ -124,7 +148,7 @@ _br() {
             fi
             ;;
         entity)
-            local entitylist=$(br application ${appid} entity | tail -n +2 | awk '{ print $1; }')
+            local entitylist=$(entities ${appid})
             if [[ "${entitylist}" ]] ; then
                 COMPREPLY=( $(compgen -W "${entitylist}" -- "${cur}") )
                 COMPREPLY=$(printf %q%s "$COMPREPLY" "$last")
