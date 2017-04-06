@@ -112,70 +112,70 @@ _br() {
     # Generate completions for current state
     case "${state}" in
         initial)
-            COMPREPLY=( $(compgen -W "${initial}" -- "${cur}") )
+            COMPREPLY=( $(compgen -W "${initial}" -- "${cur}") ) || return 1
             COMPREPLY=$(printf %q%s "$COMPREPLY" "$last")
             ;;
         app)
             local applist=$(br application | tail -n +2 | awk '{ print $1; }')
             if [[ "${applist}" ]] ; then
-                COMPREPLY=( $(compgen -W "${applist}" -- "${cur}") )
+                COMPREPLY=( $(compgen -W "${applist}" -- "${cur}") ) || return 1
                 COMPREPLY=$(printf %q%s "$COMPREPLY" "$last")
             fi
             ;;
         appid)
-            COMPREPLY=( $(compgen -W "${application}" -- "${cur}") )
+            COMPREPLY=( $(compgen -W "${application}" -- "${cur}") ) || return 1
             COMPREPLY=$(printf %q%s "$COMPREPLY" "$last")
             ;;
         appsensor)
             local sensorlist=$(br application ${appid} sensor | tail -n +2 | awk '{ print $1; }')
             if [[ "${sensorlist}" ]] ; then
-                COMPREPLY=( $(compgen -W "${sensorlist}" -- "${cur}") )
+                COMPREPLY=( $(compgen -W "${sensorlist}" -- "${cur}") ) || return 1
                 COMPREPLY=$(printf %q%s "$COMPREPLY" "$last")
             fi
             ;;
         appeffector)
             local effectorlist=$(br application ${appid} effector | tail -n +2 | awk '{ print $1; }')
             if [[ "${effectorlist}" ]] ; then
-                COMPREPLY=( $(compgen -W "${effectorlist}" -- "${cur}") )
+                COMPREPLY=( $(compgen -W "${effectorlist}" -- "${cur}") ) || return 1
                 COMPREPLY=$(printf %q%s "$COMPREPLY" "$last")
             fi
             ;;
         appconfig)
             local configlist=$(br application ${appid} config | tail -n +2 | awk '{ print $1; }')
             if [[ "${configlist}" ]] ; then
-                COMPREPLY=( $(compgen -W "${configlist}" -- "${cur}") )
+                COMPREPLY=( $(compgen -W "${configlist}" -- "${cur}") ) || return 1
                 COMPREPLY=$(printf %q%s "$COMPREPLY" "$last")
             fi
             ;;
         entity)
             local entitylist=$(entities ${appid})
             if [[ "${entitylist}" ]] ; then
-                COMPREPLY=( $(compgen -W "${entitylist}" -- "${cur}") )
+                COMPREPLY=( $(compgen -W "${entitylist}" -- "${cur}") ) || return 1
                 COMPREPLY=$(printf %q%s "$COMPREPLY" "$last")
             fi
             ;;
         entityid)
-            COMPREPLY=( $(compgen -W "${entity}" -- "${cur}") )
+            COMPREPLY=( $(compgen -W "${entity}" -- "${cur}") ) || return 1
             COMPREPLY=$(printf %q%s "$COMPREPLY" "$last")
             ;;
         entitysensor)
             local sensorlist=$(br application ${appid} entity ${entityid} sensor | tail -n +2 | awk '{ print $1; }')
             if [[ "${sensorlist}" ]] ; then
-                COMPREPLY=( $(compgen -W "${sensorlist}" -- "${cur}") )
+                COMPREPLY=( $(compgen -W "${sensorlist}" -- "${cur}") ) || return 1
                 COMPREPLY=$(printf %q%s "$COMPREPLY" "$last")
             fi
             ;;
         entityeffector)
             local effectorlist=$(br application ${appid} entity ${entityid} effector | tail -n +2 | awk '{ print $1; }')
             if [[ "${effectorlist}" ]] ; then
-                COMPREPLY=( $(compgen -W "${effectorlist}" -- "${cur}") )
+                COMPREPLY=( $(compgen -W "${effectorlist}" -- "${cur}") ) || return 1
                 COMPREPLY=$(printf %q%s "$COMPREPLY" "$last")
             fi
             ;;
         entityconfig)
             local configlist=$(br application ${appid} entity ${entityid} config | tail -n +2 | awk '{ print $1; }')
             if [[ "${configlist}" ]] ; then
-                COMPREPLY=( $(compgen -W "${configlist}" -- "${cur}") )
+                COMPREPLY=( $(compgen -W "${configlist}" -- "${cur}") ) || return 1
                 COMPREPLY=$(printf %q%s "$COMPREPLY" "$last")
             fi
             ;;
